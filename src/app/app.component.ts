@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AppService } from './app.service';
 import {
@@ -8,9 +7,7 @@ import {
   Subject,
   debounceTime,
   distinctUntilChanged,
-  map,
   switchMap,
-  withLatestFrom,
 } from 'rxjs';
 import { HttpClientModule } from '@angular/common/http';
 import { Dynos } from './dynos.interfaces';
@@ -45,13 +42,7 @@ export class AppComponent {
       distinctUntilChanged(),
 
       // switch to new search observable each time the term changes
-      switchMap((term: string) => this.appService.searchDynos(term)),
-      withLatestFrom(this.searchTerms$),
-      map(([data, term]) => {
-        return data.filter((dyno: Dynos) => {
-          return dyno.Name.toLowerCase().includes(term.toLowerCase());
-        });
-      })
+      switchMap((term: string) => this.appService.searchDynos(term))
     );
   }
 }
