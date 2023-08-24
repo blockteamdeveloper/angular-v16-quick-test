@@ -31,6 +31,7 @@ export class AppComponent {
   constructor(private appService: AppService) {}
 
   search(term: string): void {
+    console.log('term', term);
     this.searchTerms$.next(term);
   }
 
