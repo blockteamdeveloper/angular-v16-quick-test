@@ -1,11 +1,5 @@
-<input
-  type="text"
-  #searchBox
-  id="search-box"
-  (input)="search(searchBox.value)"
-/>
-<button (click)="search(searchBox.value)">Search</button>
-
+<input type="text" [(ngModel)]="searchTerm" placeholder="Search..." />
+<button (click)="onSearch()" [disabled]="loading">Search</button>
 Example of a dyno: "Aardonyx"
 <div *ngIf="(dynos$ | async)?.length === 0">No records found.</div>
 <div *ngIf="dynos$ | async">
