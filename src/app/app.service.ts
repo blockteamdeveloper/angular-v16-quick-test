@@ -15,6 +15,11 @@ export class AppService {
   constructor(private http: HttpClient) {}
 
   searchDynos(term: string): Observable<any[]> {
+    console.log('term', term);
+    if (term.length === 0 || term === null) {
+      // if the search term is empty, return an empty array as an observable
+      return of([]);
+    }
     //Using the term and some filter with lowercase to make it case insensitive
     return this.http.get<any[]>(this.apiUrl).pipe(
       map((data: Dynos[]) => {

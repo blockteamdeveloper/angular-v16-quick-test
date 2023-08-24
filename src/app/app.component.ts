@@ -18,9 +18,14 @@ import { Dynos } from './dynos.interfaces';
 export class AppComponent {
   // added this as simpliest way to stop them clicking search before we get data back
   // where is ngrx when i need it.
-  loading: boolean;
+
+  // Obserables first
   dynos$!: Observable<Dynos[]>;
+
+  // Public first
+  loading: boolean;
   searchTerm: string;
+  // Private last
 
   // For Prod I would call it DynoServicers
   constructor(private appService: AppService) {
