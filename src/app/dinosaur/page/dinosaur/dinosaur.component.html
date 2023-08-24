@@ -1,0 +1,14 @@
+<h1>{{ pagetitle }}</h1>
+
+<input type="text" #searchBox />
+<button (click)="search(searchBox.value)">Search</button>
+
+Example of a dyno: "Aardonyx"
+<div *ngIf="(dynos$ | async)?.length === 0">No records found.</div>
+<div *ngIf="dynos$ | async">
+  <h3>Results:</h3>
+  <div *ngFor="let result of dynos$ | async">
+    {{ result.Name }} <br />
+    {{ result.Description }}
+  </div>
+</div>

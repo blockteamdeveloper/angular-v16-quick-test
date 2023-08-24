@@ -1,0 +1,96 @@
+diff --git a/node_modules/jest-circus/build/index.d.ts b/node_modules/jest-circus/build/index.d.ts
+index adab032..a1ed485 100644
+--- a/node_modules/jest-circus/build/index.d.ts
++++ b/node_modules/jest-circus/build/index.d.ts
+@@ -113,6 +113,10 @@ export declare const setState: (state: Circus.State) => Circus.State;
+ 
+ export declare type State = Circus.State;
+ 
++export declare const addEventHandler: (handler: Circus.EventHandler) => void;
++
++export declare const removeEventHandler: (handler: Circus.EventHandler) => void;
++
+ declare const test_2: Global.It;
+ export {test_2 as test};
+ 
+diff --git a/node_modules/jest-circus/build/index.js b/node_modules/jest-circus/build/index.js
+index 1c848bf..7e9c6d4 100644
+--- a/node_modules/jest-circus/build/index.js
++++ b/node_modules/jest-circus/build/index.js
+@@ -35,6 +35,18 @@ Object.defineProperty(exports, 'setState', {
+     return _state.setState;
+   }
+ });
++Object.defineProperty(exports, 'addEventHandler', {
++  enumerable: true,
++  get: function () {
++    return _state.addEventHandler;
++  }
++});
++Object.defineProperty(exports, 'removeEventHandler', {
++  enumerable: true,
++  get: function () {
++    return _state.removeEventHandler;
++  }
++});
+ exports.test = void 0;
+ 
+ var _jestEach = require('jest-each');
+diff --git a/node_modules/jest-circus/build/state.js b/node_modules/jest-circus/build/state.js
+index 528b774..f194111 100644
+--- a/node_modules/jest-circus/build/state.js
++++ b/node_modules/jest-circus/build/state.js
+@@ -32,7 +32,7 @@ function _interopRequireDefault(obj) {
+  * This source code is licensed under the MIT license found in the
+  * LICENSE file in the root directory of this source tree.
+  */
+-const eventHandlers = [_eventHandler.default, _formatNodeAssertErrors.default];
++global[_types.EVENT_HANDLERS] = global[_types.EVENT_HANDLERS] || [_eventHandler.default, _formatNodeAssertErrors.default];
+ const ROOT_DESCRIBE_BLOCK_NAME = 'ROOT_DESCRIBE_BLOCK';
+ exports.ROOT_DESCRIBE_BLOCK_NAME = ROOT_DESCRIBE_BLOCK_NAME;
+ 
+@@ -74,7 +74,7 @@ const setState = state => (global[_types.STATE_SYM] = state);
+ exports.setState = setState;
+ 
+ const dispatch = async event => {
+-  for (const handler of eventHandlers) {
++  for (const handler of global[_types.EVENT_HANDLERS]) {
+     await handler(event, getState());
+   }
+ };
+@@ -82,7 +82,7 @@ const dispatch = async event => {
+ exports.dispatch = dispatch;
+ 
+ const dispatchSync = event => {
+-  for (const handler of eventHandlers) {
++  for (const handler of global[_types.EVENT_HANDLERS]) {
+     handler(event, getState());
+   }
+ };
+@@ -90,7 +90,14 @@ const dispatchSync = event => {
+ exports.dispatchSync = dispatchSync;
+ 
+ const addEventHandler = handler => {
+-  eventHandlers.push(handler);
++  global[_types.EVENT_HANDLERS].push(handler);
+ };
+ 
+ exports.addEventHandler = addEventHandler;
++
++const removeEventHandler = handler => {
++  const i = global[_types.EVENT_HANDLERS].indexOf(handler);
++  global[_types.EVENT_HANDLERS].splice(i, 1);
++};
++
++exports.removeEventHandler = removeEventHandler;
+diff --git a/node_modules/jest-circus/build/types.js b/node_modules/jest-circus/build/types.js
+index 70116de..5f552fb 100644
+--- a/node_modules/jest-circus/build/types.js
++++ b/node_modules/jest-circus/build/types.js
+@@ -25,3 +25,6 @@ const TEST_TIMEOUT_SYMBOL = Symbol.for('TEST_TIMEOUT_SYMBOL');
+ exports.TEST_TIMEOUT_SYMBOL = TEST_TIMEOUT_SYMBOL;
+ const LOG_ERRORS_BEFORE_RETRY = Symbol.for('LOG_ERRORS_BEFORE_RETRY');
+ exports.LOG_ERRORS_BEFORE_RETRY = LOG_ERRORS_BEFORE_RETRY;
++
++const EVENT_HANDLERS = Symbol.for('EVENT_HANDLERS');
++exports.EVENT_HANDLERS = EVENT_HANDLERS;
